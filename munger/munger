@@ -1,0 +1,182 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from textwrap import dedent
+import sys
+from munger import datamunger
+from munger import filemunger
+
+def flow_control(arguments):
+	try:
+		if arguments[0] == "add-ip":
+			add_ips(arguments)
+		elif arguments[0] == "sets":
+			list_sets()
+		elif arguments[0] == "list-ips":
+			list_ips(arguments)
+		elif arguments[0] == "import":
+			import_csv(arguments)
+		elif arguments[0] == "help":
+			execute_help()
+		elif arguments[0] == "activate":
+			activate_set(arguments)
+		elif arguments[0] == "revert":
+			revert_hosts()
+		elif arguments[0] == "delete":
+			delete_set(arguments)
+		elif arguments[0] == "rip":
+			remove_ip(arguments)
+		elif arguments[0] == "active":
+			get_active_set()
+		else:
+			execute_help()
+	except IndexError:
+		execute_help()
+
+def get_active_set():
+	a = datamunger.dataManager()
+	which_set = a.get_active_set()
+	if not which_set :
+		print "There are currently no active sets."
+	else:
+		print which_set[0][0] + " is the currently active set with the following IP addresses:"
+		list_ips(which_set[0])
+
+
+def add_ips(arguments):
+	# Not worried for now about checking hostnames or some sort of regex for IP addresses
+	# all I care about is that there's SOMETHING there
+	# FIrst, pop the actual action out of the arguments, then pass the remaining list to the DB
+	# for writing the ip/hostname/set — if there are enough arguments.
+	arguments.pop(0)
+	if len(arguments) == 3:
+		a = datamunger.dataManager()
+		if a.write_single_ip_entry(arguments[0], arguments[1], arguments[2]):
+			a.close_connection() # clean up after yourself
+			sys.exit(0)
+		else:
+			a.close_connection() 
+			sys.exit(1)
+	else:
+		print "It doesn't like you gave me enough information to add an entry.\n"
+		execute_help()
+
+def list_sets():
+	# Don't care about any arguments, so nothing needed.
+	a = datamunger.dataManager()
+	all_sets = a.get_all_sets()
+	if not all_sets: 
+		print "There are no sets in the database."
+		a.close_connection()
+		sys.exit(0)
+	else:
+		print "\nSet Names:"
+		for x in all_sets:
+			print " - " + x[0]
+		print "\n"
+		a.close_connection()
+		sys.exit(0)
+
+def import_csv(file_path):
+	print "This method is not implemented yet."
+	pass
+
+def list_ips(arguments):
+	if arguments[0] == 'list-ips':
+		arguments.pop(0) # Ugly. Handling the case where this is called by the get_active_set method
+	a = datamunger.dataManager()
+	if len(arguments) == 1:
+		b = a.get_all_ip_entries_for_set(arguments[0])
+		if not b:
+			print "Either that set doesn't exist, or there are no entries associated with that set name in the munger database."
+			a.close_connection()
+			sys.exit(0)
+		else:
+			print 'IP Address\t\t\tHost'
+			print '----------\t\t\t----'
+			for ip in b:
+				print ip[0] + '\t\t\t' + ip[1]
+			a.close_connection()
+			sys.exit(0)
+	else:
+		print "Hmmm, I'm not sure I understand what you're trying to get at. Try again?"
+		execute_help()
+
+def activate_set(arguments):
+	arguments.pop(0)
+	if len(arguments) == 1:
+		a = filemunger.fileManager()
+		if a.activate_hosts_set(arguments[0]):
+			print 'Activated the set: ' + arguments[0]
+			sys.exit(0)
+		else: 
+			sys.exit(1)
+	else:
+		print "Hmmm, I'm not sure I understand what you're trying to do. Try again?"
+		execute_help()
+
+def revert_hosts():
+	a = filemunger.fileManager()
+	if a.deactivate_hosts():
+		print "Reverted to hosts file backup."
+		sys.exit(0)
+	else:
+		sys.exit(1)
+
+
+def delete_set(arguments):
+	"""Note that we don't care whether the set to be deleted is active. 
+	This is in part because if the set is removed, then the record that tells us which set is active doesn't need to be updated. 
+	This may be a mistake at some point, but for now it works."""
+	arguments.pop(0)
+	if len(arguments) == 1:
+		a = datamunger.dataManager()
+		if a.delete_all_ips_for_set(arguments[0]):
+			sys.exit(0)
+		else:
+			sys.exit(1)
+	else:
+		print "Hmmm, I'm not sure I understand what you're trying to do. Try again?"
+		execute_help()
+
+def remove_ip(arguments):
+	arguments.pop(0)
+	a = datamunger.dataManager()
+	if a.remove_single_ip_address(arguments[0], arguments[1]):
+		a.close_connection()
+		sys.exit(0)
+	else:
+		a.close_connection()
+		sys.exit(1)
+
+def execute_help():
+	usage_instructions = dedent("""
+	---USAGE INSTRUCTIONS---
+	Run the munger CLI app with the following commands:
+	munger add-ip <ip-address> <hostname> <set>	— New sets are automatically added. All arguments must be present
+	munger sets					— Lists all currently available sets
+	munger list-ips <set>				— Lists all IPs and hostnames for a given set
+	munger import <file.csv>			— Imports CSV file with header of hostname,ip,set NOT YET IMPLEMENTED
+	munger help 					— Displays usage instructions 
+	munger activate <set>				— Activates a set of IPs in the hosts file. *Must be run as root*, otherwise it won't succeed.
+	munger revert					— Deactivates the active set by restoring the backed up hosts file. Must be run as root.
+	munger delete <set>				— Deletes all IP and hostname entries associated with a given set.
+	munger rip <hostname> <set>			— Removes the specified hostname entry (and associated IP address) from the given set.
+	munger active					— Lists the current active set, if any.""")
+	print usage_instructions
+
+if __name__ == "__main__":
+	# Put arguments into a separate list — this just seems like a good idea to save some headaches later. Also, lowercase to avoid any annoyances.
+	# Also, I should probably use Argparser, but, frankly, it looks too complicated for what I want to do anyway (i.e., I don't really understand it).
+	arguments = []
+	try:
+		for x in sys.argv[1:]:
+			arguments.append(x.lower())
+	except IndexError:
+		print "You didn't tell me what to do! Please use one of the arguments below.\n"
+		execute_help()
+		sys.exit(0)
+
+	# Ok, now parse those arguments and figure out what to do. 	
+	flow_control(arguments)
+	

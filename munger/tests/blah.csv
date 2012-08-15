@@ -1,0 +1,4 @@
+ip,host,set
+10.10.10.10,dexter.com,boy
+10.10.10.11,hugo.com,boy
+10.10.10.12,stephie.com,wife

@@ -1,0 +1,7 @@
+*.pyc
+*.egg-info
+
+builders/pyinstaller-1.5.1
+builders/artifacts/*
+build/
+dist/
