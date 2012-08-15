@@ -5,26 +5,16 @@ Munger is a sqlite3-based wrapper around your hosts file. The intent is for the 
 Usage Instructions
 ------------------
 
-`munger add-ip <hostname> <ip-address> <set>`
-* New sets are automatically added. All arguments must be present
-`munger sets`
-* Lists all currently available sets
-`munger list-ips <set>`
-* Lists all IPs and hostnames for a given set
-`munger import <file.csv>`
-* Imports CSV file with header of hostname,ip,set NOT YET IMPLEMENTED
-`munger help`
-* Displays usage instructions 
-`munger activate <set>`
-* Activates a set of IPs in the hosts file. *Must be run as root*, otherwise it won't succeed.
-`munger revert`
-* Restores the backed up hosts file. Must be run as root.
-`munger delete <set>`
-* Deletes all IP and hostname entries associated with a given set.
-`munger rip <hostname> <set>`
-* Removes the specified hostname entry (and associated IP address) from the given set.
-`munger active`
-* Lists the currently active set and all of its associated IP addresses and hostnames.`
+* `munger add-ip <hostname> <ip-address> <set>` New sets are automatically added. All arguments must be present
+* `munger sets` Lists all currently available sets
+* `munger list-ips <set>` Lists all IPs and hostnames for a given set
+* `munger import <file.csv>` Imports CSV file with header of hostname,ip,set NOT YET IMPLEMENTED
+* `munger help` Displays usage instructions 
+* `munger activate <set>` Activates a set of IPs in the hosts file. *Must be run as root*, otherwise it won't succeed.
+* `munger revert` Restores the backed up hosts file. Must be run as root.
+* `munger delete <set>` Deletes all IP and hostname entries associated with a given set.
+* `munger rip <hostname> <set>` Removes the specified hostname entry (and associated IP address) from the given set.
+* `munger active` Lists the currently active set and all of its associated IP addresses and hostnames.`
 
 Background
 ----------
