@@ -35,4 +35,4 @@ TBD:
 * Other ideas? Requests?
 
 Known Issues:
-* If you fail to run the activate command as sudo, the set will still be considered active by the database, so you have to run revert before you can activate for real
+* Fixed the one outstanding issue related to cleaning up the db when failing to run activate as sudo.
