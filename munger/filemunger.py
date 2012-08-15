@@ -60,11 +60,10 @@ class fileManager(object):
 			for row in list_of_ips:
 				entries = '\t'
 				entries = entries.join(row)
-				print "between: " + entries + " Voila."
 				temp_file.write(entries + '\n')
 		return temp_location
 
-	def _copy_to_etc_hosts(self, file_to_copy):
+	def _copy_to_etc_hosts(self, file_to_copy, deactivate=False):
 		if file_to_copy == None:
 			return False
 		else:
@@ -77,6 +76,8 @@ class fileManager(object):
 				return True
 			except IOError:
 				print "You must run this command with sudo; please retry as such. Hint: just type 'sudo !!'."
+				if deactivate == False:
+					self.dbstuff.make_all_sets_inactive()
 				return False
 
 	#def import_csv_file(self, csv_file_path):
