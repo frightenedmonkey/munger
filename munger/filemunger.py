@@ -72,7 +72,10 @@ class fileManager(object):
 				# flush the local dns cache. Don't care too much about the return code — 
 				# it's a simple call on the mac, need to find out how to do this on linux and windows, and whatnot
 				# As a side note, probably need to change this to make it cross-OS. For now, laziness.
-				subprocess.call(["dscacheutil", "-flushcache"]) 
+				try:
+					subprocess.call(["dscacheutil", "-flushcache"]) 
+				except Exception:
+					pass
 				return True
 			except IOError:
 				print "You must run this command with sudo; please retry as such. Hint: just type 'sudo !!'."
