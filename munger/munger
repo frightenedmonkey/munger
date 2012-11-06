@@ -8,7 +8,7 @@ from munger import filemunger
 
 def flow_control(arguments):
 	try:
-		if arguments[0] == "add-ip":
+		if arguments[0] == "add":
 			add_ips(arguments)
 		elif arguments[0] == "sets":
 			list_sets()
@@ -153,7 +153,7 @@ def execute_help():
 	usage_instructions = dedent("""
 	---USAGE INSTRUCTIONS---
 	Run the munger CLI app with the following commands:
-	munger add-ip <ip-address> <hostname> <set>	— New sets are automatically added. All arguments must be present
+	munger add <ip-address> <hostname> <set>	— New sets are automatically added. All arguments must be present
 	munger sets					— Lists all currently available sets
 	munger list-ips <set>				— Lists all IPs and hostnames for a given set
 	munger import <file.csv>			— Imports CSV file with header of hostname,ip,set NOT YET IMPLEMENTED
