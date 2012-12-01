@@ -1,5 +1,7 @@
 *.pyc
 *.egg-info
+*.swp
+.DS_store
 
 builders/pyinstaller-1.5.1
 builders/artifacts/*
