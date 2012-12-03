@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys, subprocess, os, shutil
+import sys, subprocess, os, shutil, platform
 import csv
 import datamunger
 
@@ -68,20 +68,35 @@ class fileManager(object):
 			return False
 		else:
 			try:
-				shutil.copy(file_to_copy, '/etc/hosts') # copy tempfile to replace /etc/hosts
-				# flush the local dns cache. Don't care too much about the return code — 
-				# it's a simple call on the mac, need to find out how to do this on linux and windows, and whatnot
-				# As a side note, probably need to change this to make it cross-OS. For now, laziness.
-				try:
-					subprocess.call(["dscacheutil", "-flushcache"]) 
-				except Exception:
-					pass
-				return True
+				if _check_platform() != 'Windows'
+					shutil.copy(file_to_copy, '/etc/hosts') # copy tempfile to replace /etc/hosts
+					if _check_platform() == 'Mac':
+						subprocess.call(["dscacheutil", "-flushcache"]) 
+						return True
+					elif _check_platform() == 'Ubuntu':
+						subprocess.call(["/etc/init.d/dns-clean"])
+				else:
+					print "Sorry, no Windows support yet."
 			except IOError:
 				print "You must run this command with sudo; please retry as such. Hint: just type 'sudo !!'."
 				if deactivate == False:
 					self.dbstuff.make_all_sets_inactive()
 				return False
+
+	def _check_platform(self):
+		the_os = platform.dist()
+		# This looks a bit WTF, but the tuple returned from .dist() on the mac
+		# returns as a tuple of empty strings. But .dist() correctly identifies 
+		# the specific linux distribution e.g., Ubuntu, so gotta use that. 
+		# Stupidness abounds.
+		if the_os[0] == '' and platform.system() == 'Darwin':
+			return 'Mac'
+		elif the_os[0] == 'Ubuntu':
+			return 'Ubuntu'
+		elif the_os[0] == 'Windows':
+			return 'Windows'
+		else:
+			pass
 
 	#def import_csv_file(self, csv_file_path):
 	#	with open(csv_file_path)
