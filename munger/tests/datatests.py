@@ -17,7 +17,7 @@ class dataTester (unittest.TestCase):
 			print "All the tests that just ran should not have been successful. You were running without a test.db file. FAIL."
 		else:
 			os.remove(self.home_path)
-	
+
 	def test_does_init_create_test_db(self):
 		self.assertTrue(os.path.exists(self.home_path))
 
@@ -37,7 +37,7 @@ class dataTester (unittest.TestCase):
 
 	def test_no_ips_returns_false(self):
 		self.assertFalse(self.dbstuff.get_all_ip_entries_for_set('some_random_text'))
-		
+
 	def test_no_sets_returns_false(self):
 		self.assertFalse(self.dbstuff.get_all_sets())
 
@@ -48,7 +48,7 @@ class dataTester (unittest.TestCase):
 		test_results = self.dbstuff.get_all_sets()
 		test_comparison = [['this_test_set'],['this_test_set2'],['this_test_set3']]
 		self.assertEqual(test_results, test_comparison)
-	
+
 	def test_no_active_set_returns_false(self):
 		self.assertFalse(self.dbstuff.get_active_set())
 
@@ -62,7 +62,7 @@ class dataTester (unittest.TestCase):
 		self.dbstuff.make_set_active('this_test_set')
 		result = self.dbstuff.get_active_set()
 		self.assertEqual(result, [['this_test_set']])
-	
+
 	def test_nonexistent_set_returns_false(self):
 		self.assertFalse(self.dbstuff.make_set_active('oogie-boogie'))
 

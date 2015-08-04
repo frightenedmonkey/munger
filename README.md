@@ -1,6 +1,6 @@
 Munger
 ======
-Munger is a sqlite3-based wrapper around your hosts file. The intent is for the user to be able to add sets of IP addresses and associated hostnames that can be activated and deactived as the user desires. 
+Munger is a sqlite3-based wrapper around your hosts file. The intent is for the user to be able to add sets of IP addresses and associated hostnames that can be activated and deactived as the user desires.
 
 Usage Instructions
 ------------------
@@ -9,7 +9,7 @@ Usage Instructions
 * `munger sets` Lists all currently available sets
 * `munger list-ips <set>` Lists all IPs and hostnames for a given set
 * `munger import <file.csv>` Imports CSV file with header of hostname,ip,set NOT YET IMPLEMENTED
-* `munger help` Displays usage instructions 
+* `munger help` Displays usage instructions
 * `munger activate <set>` Activates a set of IPs in the hosts file. *Must be run as root*, otherwise it won't succeed.
 * `munger revert` Restores the backed up hosts file. Must be run as root.
 * `munger delete <set>` Deletes all IP and hostname entries associated with a given set.
